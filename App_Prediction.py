@@ -324,8 +324,9 @@ st.markdown(
     .section-kicker {{ color: {TEAL}; font-size: .68rem; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; margin-bottom: 4px; }}
     .section-title {{ color: {INK}; font-family: 'Space Grotesk',sans-serif; font-size: 1.55rem; font-weight: 700; margin: 0 0 4px; }}
     .section-sub {{ color: {MUTED}; font-size: .88rem; margin-bottom: 18px; }}
-    .panel-title {{ color: {INK}; font-family: 'Space Grotesk',sans-serif; font-size: 1rem; font-weight: 650; margin-bottom: 3px; }}
-    .panel-note {{ color: {MUTED}; font-size: .76rem; margin-bottom: 12px; }}
+    .panel-heading {{ margin: 0 0 16px; }}
+    .panel-title {{ color: {INK}; font-family: 'Space Grotesk',sans-serif; font-size: 1rem; font-weight: 650; line-height: 1.35; margin: 0 0 7px; }}
+    .panel-note {{ color: {MUTED}; font-size: .76rem; line-height: 1.5; margin: 0; }}
     .notice {{
       background: rgba(255,181,71,.09); border: 1px solid rgba(255,181,71,.38);
       border-left: 4px solid {AMBER}; border-radius: 12px; color: #FFE0A6;
@@ -349,27 +350,74 @@ st.markdown(
       border: 1px solid {BORDER} !important; border-radius: 10px !important;
       color: {INK} !important; background: {PANEL_ALT} !important;
     }}
-    [data-testid="stForm"] {{ border:1px solid {BORDER}; border-radius:14px; padding:18px; background:{PANEL}; }}
+    [data-testid="stForm"] {{ border:1px solid {BORDER}; border-radius:14px; padding:20px; background:{PANEL} !important; }}
+    [data-testid="stForm"] label {{ color:{INK} !important; font-weight:600 !important; }}
+    [data-testid="stForm"] [data-baseweb="select"] > div,
+    [data-testid="stForm"] input,
+    [data-testid="stForm"] textarea {{ background:#0D141D !important; color:#F3F7FC !important; border:1px solid #64758A !important; border-radius:9px !important; }}
+    [data-testid="stForm"] [data-baseweb="select"] svg {{ fill:#DCE7F4 !important; }}
     input, textarea {{ color: {INK} !important; }}
-    /* Streamlit columns naturally wrap on narrow screens; these rules keep
-       charts, cards and sidebar controls usable at tablet/mobile widths. */
-    [data-testid="stHorizontalBlock"] {{ align-items: stretch; gap: 1.15rem; }}
-    [data-testid="stColumn"] {{ min-width: 0 !important; }}
-    [data-testid="stVegaLiteChart"] {{ width:100%; overflow:visible; }}
+    /* Responsive layout: ordinary chart/form columns stack on phones.
+       KPI columns have their own grid so the six cards remain compact. */
+    [data-testid="stHorizontalBlock"] {{ align-items:stretch; gap:1.15rem; min-width:0; }}
+    [data-testid="column"], [data-testid="stColumn"] {{ min-width:0 !important; box-sizing:border-box; }}
+    [data-testid="stVegaLiteChart"], [data-testid="stAltairChart"] {{ width:100% !important; max-width:100%; overflow:hidden; }}
+    [data-testid="stVegaLiteChart"] canvas, [data-testid="stVegaLiteChart"] svg {{ max-width:100%; }}
+    .panel-heading {{ width:100%; box-sizing:border-box; }}
     .recommendation-card {{ display:flex; flex-direction:column; }}
-    @media(max-width: 900px) {{
-      .block-container {{ padding: 1rem 1rem 2rem; }}
-      .hero {{ padding:22px; }}
-      [data-testid="stHorizontalBlock"] {{ flex-wrap:wrap; }}
-      [data-testid="stHorizontalBlock"] > [data-testid="column"] {{ min-width:min(100%, 320px) !important; flex:1 1 100%; }}
+    .st-key-kpi-grid {{ width:100%; min-width:0; margin:0 0 2.7rem !important; }}
+    .st-key-kpi-grid [data-testid="stHorizontalBlock"] {{
+      display:grid !important; grid-template-columns:repeat(6,minmax(0,1fr)) !important;
+      column-gap:1rem !important; row-gap:1.15rem !important;
+      align-items:stretch !important; width:100% !important;
     }}
-    @media(max-width: 600px) {{
-      .block-container {{ padding: .7rem .65rem 1.5rem; }}
-      .hero {{ padding:17px; border-radius:15px; }}
+    .st-key-kpi-grid [data-testid="column"],
+    .st-key-kpi-grid [data-testid="stColumn"] {{
+      min-width:0 !important; width:auto !important; max-width:none !important;
+      flex:none !important; margin:0 !important;
+    }}
+    .kpi-card {{ width:100%; min-width:0; min-height:112px; height:112px; box-sizing:border-box;
+      display:flex; flex-direction:column; justify-content:center; overflow:hidden;
+      padding:14px 13px; border-radius:13px; }}
+    .kpi-label {{ font-size:.64rem; line-height:1.3; font-weight:800; letter-spacing:.065em; overflow-wrap:anywhere; }}
+    .kpi-value {{ margin-top:7px; font-family:'Space Grotesk',sans-serif; font-size:clamp(1.12rem,1.5vw,1.48rem);
+      line-height:1.1; font-weight:700; white-space:nowrap; letter-spacing:-.04em; font-variant-numeric:tabular-nums; }}
+    @media(max-width: 1100px) {{
+      .block-container {{ padding:1rem 1rem 2rem; }}
+      .hero {{ padding:22px; }}
+      .st-key-kpi-grid [data-testid="stHorizontalBlock"] {{ grid-template-columns:repeat(3,minmax(0,1fr)) !important; }}
+      .kpi-value {{ font-size:1.3rem; }}
+    }}
+    @media(max-width: 760px) {{
+      .block-container {{ padding:1rem .9rem 2rem; }}
+      .hero {{ padding:19px; }}
+      [data-testid="stHorizontalBlock"] {{ flex-wrap:wrap !important; gap:1rem !important; }}
+      [data-testid="stHorizontalBlock"] > [data-testid="column"],
+      [data-testid="stHorizontalBlock"] > [data-testid="stColumn"] {{
+        flex:1 1 100% !important; width:100% !important; max-width:100% !important; min-width:100% !important;
+      }}
+      .st-key-kpi-grid [data-testid="stHorizontalBlock"] {{ grid-template-columns:repeat(2,minmax(0,1fr)) !important; column-gap:.9rem !important; row-gap:1.1rem !important; }}
+      .st-key-kpi-grid [data-testid="stHorizontalBlock"] > [data-testid="column"],
+      .st-key-kpi-grid [data-testid="stHorizontalBlock"] > [data-testid="stColumn"] {{
+        min-width:0 !important; width:auto !important; max-width:none !important; flex:none !important;
+      }}
+      .kpi-card {{ min-height:104px; height:104px; padding:12px 10px; }}
+      .kpi-label {{ font-size:.59rem; letter-spacing:.04em; }}
+      .kpi-value {{ font-size:1.12rem; margin-top:6px; }}
+      .panel-heading {{ margin-bottom:14px; }}
+    }}
+    @media(max-width: 480px) {{
+      .block-container {{ padding:.75rem .65rem 1.5rem; }}
+      .hero {{ padding:16px; border-radius:15px; }}
       .hero-title {{ font-size:1.55rem; }}
       .section-title {{ font-size:1.3rem; }}
-      [data-testid="stMetric"] {{ min-height:96px; padding:12px !important; }}
-      [data-testid="stMetricValue"] {{ font-size:1.35rem !important; }}
+      .section-sub {{ margin-bottom:15px; }}
+      .st-key-kpi-grid [data-testid="stHorizontalBlock"] {{ grid-template-columns:repeat(2,minmax(0,1fr)) !important; column-gap:.8rem !important; row-gap:1rem !important; }}
+      .kpi-card {{ min-height:98px; height:98px; padding:11px 9px; }}
+      .kpi-label {{ font-size:.57rem; }}
+      .kpi-value {{ font-size:1.08rem; }}
+      .panel-title {{ font-size:.96rem; }}
+      .panel-note {{ font-size:.73rem; }}
     }}
     </style>
     """,
@@ -565,23 +613,15 @@ def filter_linked_data(collisions, casualties, vehicles):
 # =============================================================================
 
 def panel(title: str, subtitle: str | None = None):
-    st.markdown(f'<div class="panel-title">{title}</div>', unsafe_allow_html=True)
-    if subtitle:
-        st.markdown(f'<div class="panel-note">{subtitle}</div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="panel-heading"><div class="panel-title">{title}</div></div>', unsafe_allow_html=True)
 
 
-def section_heading(kicker: str, title: str, subtitle: str):
-    st.markdown(
-        f'<div class="section-kicker">{kicker}</div>'
-        f'<div class="section-title">{title}</div>'
-        f'<div class="section-sub">{subtitle}</div>',
-        unsafe_allow_html=True,
-    )
+def section_heading(kicker: str, title: str, subtitle: str = ""):
+    st.markdown(f'<div class="section-title" style="margin:0 0 1.15rem">{title}</div>', unsafe_allow_html=True)
 
 
 def show_chart(chart, key: str | None = None, height: int | None = None):
-    if height:
-        chart = chart.properties(height=height)
+    chart = chart.properties(height=340, width="container")
     chart = (
         chart.configure(background=PANEL)
         .configure_view(strokeOpacity=0)
@@ -718,17 +758,20 @@ def render_kpis(collisions, casualties):
         ("SERIOUSLY INJURED", f"{values[4]:,}", AMBER),
         ("VULNERABLE ROAD USERS", f"{values[5]:.1f}%", CYAN),
     ]
-    cols = st.columns(6)
-    for col, (label, value, colour) in zip(cols, labels):
-        with col:
-            st.markdown(
-                f'<div style="background:{PANEL};border:1px solid {BORDER};'
-                f'border-top:3px solid {colour};border-radius:13px;padding:16px 15px;min-height:116px;height:116px;display:flex;flex-direction:column;justify-content:center">'
-                f'<div style="color:{MUTED};font-size:.68rem;font-weight:800;letter-spacing:.08em">{label}</div>'
-                f'<div style="color:{INK};font-family:Space Grotesk;font-size:1.65rem;font-weight:700;margin-top:7px">{value}</div>'
-                f'</div>',
-                unsafe_allow_html=True,
-            )
+    # A dedicated keyed container lets the responsive CSS keep KPI cards in
+    # a compact 6 / 3 / 2-column grid without affecting the chart layouts.
+    with st.container(key="kpi-grid"):
+        cols = st.columns(6, gap="small")
+        for col, (label, value, colour) in zip(cols, labels):
+            with col:
+                st.markdown(
+                    f'<div class="kpi-card" style="background:linear-gradient(145deg,{PANEL_ALT},{PANEL});'
+                    f'border:1px solid {BORDER};border-top:3px solid {colour}">'
+                    f'<div class="kpi-label" style="color:{MUTED}">{label}</div>'
+                    f'<div class="kpi-value" style="color:{INK}">{value}</div>'
+                    f'</div>',
+                    unsafe_allow_html=True,
+                )
 
 
 def monthly_counts(df):
@@ -864,6 +907,12 @@ with st.sidebar:
     speed_values = collisions_all["speed_label"].dropna().astype(str).unique().tolist()
     speed_values = sorted(speed_values, key=lambda x: (x == "Unknown", int(x) if x.isdigit() else 999))
 
+    st.session_state.setdefault("filter_years", years)
+    st.session_state.setdefault("filter_severity", severities)
+    st.session_state.setdefault("filter_area", areas)
+    st.session_state.setdefault("filter_road", road_types)
+    st.session_state.setdefault("filter_speed", speed_values)
+
     def reset_global_filters():
         for key in ["filter_years", "filter_severity", "filter_area", "filter_road", "filter_speed"]:
             st.session_state.pop(key, None)
@@ -872,10 +921,8 @@ with st.sidebar:
     with st.expander("Time period & outcome", expanded=True):
         selected_years = st.multiselect(
             "Collision year", options=years, default=years, key="filter_years",
-            placeholder="Choose one or more years",
-            help="All years present in the loaded collision file are listed here. Select multiple years to compare them; monthly trends use a distinct colour for each year."
+            placeholder="All years"
         )
-        st.caption("Years available in loaded data: " + ", ".join(map(str, years)))
         selected_severity = st.multiselect(
             "Collision severity", severities, default=severities, key="filter_severity",
             placeholder="All severity levels"
@@ -884,11 +931,6 @@ with st.sidebar:
         selected_areas = st.multiselect("Area type", areas, default=areas, key="filter_area", placeholder="All area types")
         selected_roads = st.multiselect("Road type", road_types, default=road_types, key="filter_road", placeholder="All road types")
         selected_speeds = st.multiselect("Speed limit (mph)", speed_values, default=speed_values, key="filter_speed", placeholder="All speed limits")
-    st.markdown(
-        f'<div class="filter-caption">Filters apply across the analytics, road-user and collision-explorer sections. '
-        f'Prediction inputs remain independent because they describe a hypothetical scenario.</div>',
-        unsafe_allow_html=True,
-    )
 
 filtered_collisions = collisions_all.copy()
 filtered_collisions = filtered_collisions[
@@ -908,24 +950,7 @@ if filtered_collisions.empty:
 
 date_min = filtered_collisions["date"].min()
 date_max = filtered_collisions["date"].max()
-st.markdown(
-    f'<div class="hero"><div class="eyebrow">UK DEPARTMENT FOR TRANSPORT · STATS19</div>'
-    f'<div class="hero-title">Road Safety Intelligence</div>'
-    f'<div class="hero-sub">A data-led view of UK road collisions, road-user outcomes and collision severity. '
-    f'Explore patterns across {date_min:%Y}–{date_max:%Y}, investigate individual records, '
-    f'and experiment with a research-only machine-learning model.</div></div>',
-    unsafe_allow_html=True,
-)
-st.markdown(
-    f'<div class="notice"><strong>RESEARCH-ONLY MODEL.</strong> {RESEARCH_ONLY_NOTICE}</div>',
-    unsafe_allow_html=True,
-)
-st.caption(
-    f"Current selection: **{len(filtered_collisions):,} collisions** · "
-    f"**{len(filtered_casualties):,} casualties** · "
-    f"**{len(filtered_vehicles):,} vehicles** · "
-    f"{date_min:%d %b %Y} – {date_max:%d %b %Y}"
-)
+st.markdown('<h1 style="margin:0 0 1.4rem 0">Road Safety Intelligence</h1>', unsafe_allow_html=True)
 
 
 # =============================================================================
@@ -933,45 +958,35 @@ st.caption(
 # =============================================================================
 
 def render_overview():
-    section_heading(
-        "01 / OVERVIEW", "The road safety picture",
-        "A high-level view of collision volume, severity, timing and location in the selected period.",
-    )
+    section_heading("", "Overview", "")
     render_kpis(filtered_collisions, filtered_casualties)
-
-    left, right = st.columns([1.05, 1.45], gap="large")
+    left, right = st.columns([1, 1.35], gap="large")
     with left:
         severity_donut(filtered_collisions, "collision_severity_label")
     with right:
-        panel("Collision trend over time", "Monthly collision counts across the selected years.")
+        panel("Collision trend over time")
         trend = monthly_counts(filtered_collisions)
         if trend.empty:
             empty_state("No valid dates in the current selection.")
         else:
-            chart = alt.Chart(trend).mark_line(
-                strokeWidth=3, point=alt.OverlayMarkDef(size=48, filled=True)
-            ).encode(
-                x=alt.X("MonthNo:O", title=None, sort=list(range(1, 13)),
-                        axis=alt.Axis(labelExpr="['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][datum.value-1]")),
+            chart = alt.Chart(trend).mark_line(strokeWidth=3, point=alt.OverlayMarkDef(size=48, filled=True)).encode(
+                x=alt.X("MonthNo:O", title=None, sort=list(range(1, 13)), axis=alt.Axis(labelExpr="['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][datum.value-1]")),
                 y=alt.Y("Collisions:Q", title="Collisions", scale=alt.Scale(zero=True)),
                 color=alt.Color("Year:N", title="Year", scale=alt.Scale(range=YEAR_PALETTE)),
                 tooltip=[alt.Tooltip("Year:N"), alt.Tooltip("Month:N"), alt.Tooltip("Collisions:Q", format=",")],
-            ).properties(height=390)
+            )
             show_chart(chart)
-
-    left, right = st.columns([1, 1], gap="large")
+    left, right = st.columns(2, gap="large")
     with left:
         area_counts = count_frame(filtered_collisions["area_label"], "Area", "Collisions")
         bar_chart(area_counts, "Area", "Collisions", "Collisions by area", colour=BLUE)
     with right:
-        panel("Collision locations", "Recorded coordinates within the current selection; points are sampled for display.")
+        panel("Collision locations")
         geo = filtered_collisions.dropna(subset=["latitude", "longitude"]).copy()
         geo["latitude"] = pd.to_numeric(geo["latitude"], errors="coerce")
         geo["longitude"] = pd.to_numeric(geo["longitude"], errors="coerce")
         geo = geo.dropna(subset=["latitude", "longitude"])
-        geo = geo[
-            geo["latitude"].between(49, 61) & geo["longitude"].between(-9, 3)
-        ]
+        geo = geo[geo["latitude"].between(49, 61) & geo["longitude"].between(-9, 3)]
         if geo.empty:
             empty_state("No valid UK coordinates are available for this selection.")
         else:
@@ -979,54 +994,12 @@ def render_overview():
                 geo = geo.sample(5000, random_state=42)
             st.map(geo[["latitude", "longitude"]], latitude="latitude", longitude="longitude")
 
-    st.markdown("### What stands out")
-    findings = generate_key_findings(filtered_collisions, filtered_casualties)
-    if findings:
-        for item in findings[:5]:
-            st.markdown(f"- {item}")
-    else:
-        st.info("There are not enough records to generate a reliable summary.")
-    st.caption("Descriptive findings reflect the selected records; they do not establish causation.")
-
-    st.markdown("### Suggested areas for attention")
-    st.caption("Automatically generated from the active filters. These are investigation prompts, not policy or operational instructions.")
-    recs = generate_recommendations(filtered_collisions, filtered_casualties)
-    rec_cols = st.columns(min(2, len(recs)), gap="large")
-    for idx, (tag, title, copy, colour) in enumerate(recs):
-        with rec_cols[idx % len(rec_cols)]:
-            st.markdown(
-                f'<div class="recommendation-card"><div class="recommendation-tag" style="color:{colour}">{tag}</div>'
-                f'<div class="recommendation-title">{title}</div><div class="recommendation-copy">{copy}</div></div>',
-                unsafe_allow_html=True,
-            )
-
 
 def render_collision_analytics():
-    section_heading(
-        "02 / COLLISION ANALYTICS", "When and where collisions occur",
-        "Explore temporal patterns and the road, lighting and environmental conditions recorded at collision scenes.",
-    )
-    c1, c2 = st.columns(2, gap="large")
-    with c1:
-        panel("Collisions by weekday", "Count of collision records.")
-        day_counts = count_frame(filtered_collisions["weekday"], "Weekday", "Collisions")
-        day_counts["Weekday"] = pd.Categorical(day_counts["Weekday"], WEEKDAY_ORDER, ordered=True)
-        day_counts = day_counts.sort_values("Weekday")
-        bar_chart(day_counts, "Weekday", "Collisions", " ", colour=BLUE, order=WEEKDAY_ORDER)
-    with c2:
-        panel("Collisions by hour", "Hour is derived from the recorded collision time.")
-        hour_counts = count_frame(
-            filtered_collisions.loc[filtered_collisions["hour_label"] != "Unknown", "hour_label"],
-            "Hour", "Collisions",
-        )
-        bar_chart(hour_counts, "Hour", "Collisions", " ", colour=TEAL, order=HOUR_ORDER)
-
-    panel("Day and hour collision pattern", "Darker cells indicate more recorded collisions.")
-    heat = (
-        filtered_collisions[filtered_collisions["hour_label"] != "Unknown"]
-        .groupby(["weekday", "hour_label"], observed=True).size()
-        .reset_index(name="Collisions")
-    )
+    section_heading("", "Collision Analytics", "")
+    panel("Collision patterns by day and hour")
+    heat = (filtered_collisions[filtered_collisions["hour_label"] != "Unknown"]
+            .groupby(["weekday", "hour_label"], observed=True).size().reset_index(name="Collisions"))
     if heat.empty:
         empty_state("No valid day/hour observations.")
     else:
@@ -1035,79 +1008,47 @@ def render_collision_analytics():
             y=alt.Y("weekday:O", sort=WEEKDAY_ORDER, title=None),
             color=alt.Color("Collisions:Q", scale=alt.Scale(scheme="tealblues"), title="Collisions"),
             tooltip=["weekday:N", "hour_label:N", alt.Tooltip("Collisions:Q", format=",")],
-        ).properties(height=340)
+        )
         show_chart(chart)
-
     c1, c2 = st.columns(2, gap="large")
     with c1:
-        light = filtered_collisions.groupby(
-            ["light_label", "collision_severity_label"], observed=True
-        ).size().reset_index(name="Count")
-        stacked_severity_chart(light, "light_label", title="Severity composition by light condition")
+        light = filtered_collisions.groupby(["light_label", "collision_severity_label"], observed=True).size().reset_index(name="Count")
+        stacked_severity_chart(light, "light_label", title="Severity by light condition")
     with c2:
-        road = filtered_collisions.groupby(
-            ["road_type_label", "collision_severity_label"], observed=True
-        ).size().reset_index(name="Count")
-        stacked_severity_chart(road, "road_type_label", title="Severity composition by road type")
-
-    c1, c2 = st.columns(2, gap="large")
-    with c1:
-        weather = count_frame(filtered_collisions["weather_label"], "Weather", "Collisions")
-        bar_chart(weather, "Weather", "Collisions", "Recorded weather conditions", colour=PURPLE, horizontal=True)
-    with c2:
-        surface = count_frame(filtered_collisions["surface_label"], "Surface", "Collisions")
-        bar_chart(surface, "Surface", "Collisions", "Recorded road surface conditions", colour=AMBER, horizontal=True)
-
-    c1, c2 = st.columns(2, gap="large")
-    with c1:
-        speed = filtered_collisions[filtered_collisions["speed_label"] != "Unknown"].groupby(
-            "speed_label", observed=True
-        ).agg(
-            Collisions=("is_fatal", "size"), Fatal=("is_fatal", "sum")
-        ).reset_index()
-        if not speed.empty:
-            speed["Fatal per 1,000"] = speed["Fatal"] / speed["Collisions"] * 1000
-            speed["speed_order"] = pd.to_numeric(speed["speed_label"], errors="coerce")
-            speed = speed.sort_values("speed_order")
-            panel("Fatal collisions per 1,000 records by speed limit", "Groups with fewer observations should be interpreted cautiously.")
-            chart = alt.Chart(speed).mark_bar(color=RED, cornerRadiusEnd=4).encode(
-                x=alt.X("speed_label:O", sort=speed["speed_label"].tolist(), title="Speed limit (mph)"),
-                y=alt.Y("Fatal per 1,000:Q", title="Fatal collisions per 1,000"),
-                tooltip=["speed_label:N", alt.Tooltip("Collisions:Q", format=","), alt.Tooltip("Fatal:Q", format=","), alt.Tooltip("Fatal per 1,000:Q", format=".2f")],
-            ).properties(height=340)
-            show_chart(chart)
-        else:
-            empty_state("No speed-limit records.")
-    with c2:
-        junction = count_frame(filtered_collisions["junction_detail_label"], "Junction", "Collisions")
-        bar_chart(junction, "Junction", "Collisions", "Collisions by junction detail", colour=BLUE, horizontal=True)
+        road = filtered_collisions.groupby(["road_type_label", "collision_severity_label"], observed=True).size().reset_index(name="Count")
+        stacked_severity_chart(road, "road_type_label", title="Severity by road type")
+    speed = (filtered_collisions[filtered_collisions["speed_label"] != "Unknown"]
+             .groupby("speed_label", observed=True).agg(Collisions=("is_fatal", "size"), Fatal=("is_fatal", "sum")).reset_index())
+    panel("Fatal collisions per 1,000 by speed limit")
+    if speed.empty:
+        empty_state("No speed-limit records.")
+    else:
+        speed["Fatal per 1,000"] = speed["Fatal"] / speed["Collisions"] * 1000
+        speed["speed_order"] = pd.to_numeric(speed["speed_label"], errors="coerce")
+        speed = speed.sort_values("speed_order")
+        chart = alt.Chart(speed).mark_bar(color=RED, cornerRadiusEnd=4).encode(
+            x=alt.X("speed_label:O", sort=speed["speed_label"].tolist(), title="Speed limit (mph)"),
+            y=alt.Y("Fatal per 1,000:Q", title="Fatal collisions per 1,000"),
+            tooltip=["speed_label:N", alt.Tooltip("Collisions:Q", format=","), alt.Tooltip("Fatal:Q", format=","), alt.Tooltip("Fatal per 1,000:Q", format=".2f")],
+        )
+        show_chart(chart)
 
 
 def render_road_users():
-    section_heading(
-        "03 / ROAD USERS", "Who is affected",
-        "Understand casualty severity, vulnerable road users, age patterns and the vehicle types involved.",
-    )
-    render_kpis(filtered_collisions, filtered_casualties)
+    section_heading("", "Road Users", "")
     if filtered_casualties.empty:
         return empty_state("No casualty records are linked to the current collision selection.")
-
     c1, c2 = st.columns(2, gap="large")
     with c1:
         users = count_frame(filtered_casualties["user_type"], "Road user", "Casualties")
         bar_chart(users, "Road user", "Casualties", "Casualties by road-user group", colour=TEAL, horizontal=True)
     with c2:
-        age = filtered_casualties.groupby(
-            ["age_band_label", "casualty_severity_label"], observed=True
-        ).size().reset_index(name="Casualties")
-        stacked_severity_chart(age, "age_band_label", "Casualties", "Casualties by age band and severity")
-
-    user_ksi = filtered_casualties.groupby("user_type").agg(
-        Casualties=("is_ksi", "size"), KSI=("is_ksi", "sum")
-    ).reset_index()
+        age = filtered_casualties.groupby(["age_band_label", "casualty_severity_label"], observed=True).size().reset_index(name="Casualties")
+        stacked_severity_chart(age, "age_band_label", "Casualties", "Severity by casualty age band")
+    user_ksi = filtered_casualties.groupby("user_type").agg(Casualties=("is_ksi", "size"), KSI=("is_ksi", "sum")).reset_index()
     user_ksi["KSI share (%)"] = user_ksi["KSI"] / user_ksi["Casualties"] * 100
     user_ksi = user_ksi[user_ksi["Casualties"] >= 50]
-    panel("Killed or seriously injured share by road-user group", "KSI = casualties recorded as killed or seriously injured. Groups with fewer than 50 records are omitted.")
+    panel("Killed or seriously injured share by road-user group")
     if user_ksi.empty:
         empty_state("Not enough casualty records per road-user group for this comparison.")
     else:
@@ -1116,42 +1057,22 @@ def render_road_users():
             y=alt.Y("user_type:N", sort="-x", title=None),
             color=alt.Color("user_type:N", scale=alt.Scale(scheme="tableau10"), legend=None),
             tooltip=["user_type:N", alt.Tooltip("Casualties:Q", format=","), alt.Tooltip("KSI:Q", format=","), alt.Tooltip("KSI share (%):Q", format=".1f")],
-        ).properties(height=340)
+        )
         show_chart(chart)
-
-    c1, c2 = st.columns(2, gap="large")
-    with c1:
-        sex = count_frame(filtered_casualties["sex_label"], "Sex", "Casualties")
-        panel("Casualties by recorded sex", "Recorded sex categories are shown separately.")
-        if sex.empty:
-            empty_state("No recorded sex values are available.")
-        else:
-            sex_colours = {"Male": BLUE, "Female": CORAL, "Not applicable": PURPLE, "Unknown": MUTED}
-            sex_chart = alt.Chart(sex).mark_bar(cornerRadiusEnd=5).encode(
-                x=alt.X("Casualties:Q", title="Casualty records"),
-                y=alt.Y("Sex:N", sort="-x", title=None),
-                color=alt.Color("Sex:N", scale=alt.Scale(domain=list(sex_colours), range=list(sex_colours.values())), legend=None),
-                tooltip=["Sex:N", alt.Tooltip("Casualties:Q", format=",")],
-            ).properties(height=350)
-            show_chart(sex_chart)
-    with c2:
-        vehicle_types = count_frame(filtered_vehicles["vehicle_type_label"], "Vehicle", "Vehicles")
-        bar_chart(vehicle_types, "Vehicle", "Vehicles", "Vehicles involved", colour=AMBER, horizontal=True)
-
     severity = count_frame(filtered_casualties["casualty_severity_label"], "Severity", "Casualties")
     severity["sort_order"] = severity["Severity"].map({x: i for i, x in enumerate(SEVERITY_ORDER)})
     severity = severity.sort_values("sort_order")
-    panel("Casualty totals by severity", "Counts of casualty records, not collision records. Fatal, serious and slight outcomes use consistent colours throughout the dashboard.")
+    panel("Casualty totals by severity")
     if severity.empty:
         empty_state("No casualty severity records are available.")
     else:
-        severity_chart = alt.Chart(severity).mark_bar(cornerRadiusEnd=5).encode(
+        chart = alt.Chart(severity).mark_bar(cornerRadiusEnd=5).encode(
             x=alt.X("Casualties:Q", title="Casualty records"),
             y=alt.Y("Severity:N", sort=SEVERITY_ORDER, title=None),
             color=alt.Color("Severity:N", scale=alt.Scale(domain=SEVERITY_ORDER, range=[SEVERITY_COLOURS[x] for x in SEVERITY_ORDER]), legend=None),
             tooltip=["Severity:N", alt.Tooltip("Casualties:Q", format=",")],
-        ).properties(height=350)
-        show_chart(severity_chart)
+        )
+        show_chart(chart)
 
 
 # =============================================================================
@@ -1428,15 +1349,8 @@ def severity_name(value):
 
 
 def render_prediction():
-    section_heading(
-        "04 / SEVERITY PREDICTION", "Explore a collision scenario",
-        "Enter a hypothetical collision profile and inspect the saved model's predicted class and class scores.",
-    )
-    st.markdown(
-        f'<div class="notice"><strong>IMPORTANT LIMITATION.</strong> {RESEARCH_ONLY_NOTICE} '
-        f'This model estimates severity conditional on a collision being recorded; it does not forecast collision occurrence.</div>',
-        unsafe_allow_html=True,
-    )
+    section_heading("", "Severity Prediction", "")
+    st.caption("Research demonstration only · severity prediction conditional on a recorded collision.")
     try:
         model, contract, metadata, specs = load_prediction_assets()
     except ModuleNotFoundError as exc:
@@ -1484,13 +1398,8 @@ def render_prediction():
     names = [spec["feature"] for spec in specs]
     primary = [spec for spec in specs if spec["feature"] in KEY_PREDICTORS]
     advanced = [spec for spec in specs if spec["feature"] not in KEY_PREDICTORS]
-    st.markdown(
-        f"**Model input contract:** {len(specs)} features · "
-        f"**Estimator:** {type(model).__name__}"
-    )
     values = {}
     with st.form("collision_severity_prediction"):
-        st.markdown("#### Main collision characteristics")
         cols = st.columns(2)
         for i, spec in enumerate(primary):
             with cols[i % 2]:
@@ -1506,7 +1415,6 @@ def render_prediction():
         )
 
     if not submitted:
-        st.caption("The form is generated from the saved model contract. Expand the additional inputs to review all model features.")
         return
 
     try:
@@ -1586,10 +1494,7 @@ def render_prediction():
 # =============================================================================
 
 def render_collision_explorer():
-    section_heading(
-        "05 / COLLISION EXPLORER", "Investigate individual collision records",
-        "Search the filtered collision records and inspect linked vehicle and casualty information.",
-    )
+    section_heading("", "Collision Explorer", "")
     records = filtered_collisions.copy()
     left, right = st.columns([2, 1])
     with left:
@@ -1633,7 +1538,6 @@ def render_collision_explorer():
         "number_of_casualties": "Casualties", "speed_label": "Speed limit (mph)",
         "road_type_label": "Road type", "area_label": "Area", "light_label": "Lighting",
     })
-    st.caption(f"Showing {len(current):,} of {len(records):,} matching collision records.")
     st.dataframe(display, hide_index=True, use_container_width=True)
 
     collision_ids = current["collision_index"].astype(str).tolist()
@@ -1764,14 +1668,8 @@ def final_estimator(model):
 
 
 def render_model_insights():
-    section_heading(
-        "06 / MODEL INSIGHTS", "How the severity model performs",
-        "Review the saved evaluation evidence, model characteristics and limitations before interpreting any prediction.",
-    )
-    st.markdown(
-        f'<div class="notice"><strong>NOT APPROVED FOR OPERATIONAL USE.</strong> {RESEARCH_ONLY_NOTICE}</div>',
-        unsafe_allow_html=True,
-    )
+    section_heading("", "Model Insights", "")
+    st.caption("Research-only model · not approved for operational decisions.")
     metadata = _load_json(METADATA_PATH)
     contract = _load_json(CONTRACT_PATH)
     if not metadata:
@@ -1802,7 +1700,6 @@ def render_model_insights():
         else:
             st.info("No recognised evaluation metrics were found in metadata.json. No values have been inferred.")
 
-    st.markdown("### Saved model artefacts")
     model_path_exists = MODEL_PATH.exists()
     contract_path_exists = CONTRACT_PATH.exists()
     metadata_path_exists = METADATA_PATH.exists()
@@ -1830,7 +1727,7 @@ def render_model_insights():
                 importances = pd.DataFrame({"Feature": feature_names, "Importance": values})
         if importances is not None:
             importances = importances.sort_values("Importance", ascending=False).head(20)
-            panel("Top model feature importance", "Estimator-derived importance; this describes model reliance, not causation.")
+            panel("Top model feature importance")
             chart = alt.Chart(importances).mark_bar(color=TEAL, cornerRadiusEnd=4).encode(
                 x=alt.X("Importance:Q", title="Importance"),
                 y=alt.Y("Feature:N", sort="-x", title=None),
@@ -1866,27 +1763,14 @@ def render_model_insights():
         except (ValueError, OSError, json.JSONDecodeError, TypeError):
             confusion = None
     if confusion is not None and not confusion.empty:
-        panel("Saved test-set confusion matrix", "Only shown when a confusion-matrix artefact exists in outputs/ or models/.")
+        panel("Saved test-set confusion matrix")
         confusion.index.name = "Actual"
         confusion.columns.name = "Predicted"
         st.dataframe(confusion, use_container_width=True)
 
-    st.markdown("### Interpretation and limitations")
-    limitations = [
-        "The target is collision severity for recorded personal-injury collisions; the model does not predict collision occurrence.",
-        "Fatal outcomes are a small minority class, so class imbalance materially affects precision and overall accuracy.",
-        "The model is evaluated on a later chronological period; performance may change as reporting practices, road conditions and traffic patterns change.",
-        "Feature importance is not evidence that a feature causes a collision or a more severe outcome.",
-        "Predicted scores should not be interpreted as calibrated probabilities unless calibration has been separately evaluated.",
-        "The model has not passed the project's acceptance gate and must remain a research demonstration.",
-    ]
-    for item in limitations:
-        st.markdown(f"- {item}")
-
-    if contract.get("scope_warning"):
-        st.info(contract["scope_warning"])
-    if contract.get("operational_warning"):
-        st.warning(contract["operational_warning"])
+    with st.expander("Model limitations"):
+        st.write(contract.get("scope_warning", "The model predicts severity conditional on a recorded collision; it does not predict collision occurrence."))
+        st.warning(contract.get("operational_warning", RESEARCH_ONLY_NOTICE))
 
 
 # =============================================================================
@@ -1906,9 +1790,4 @@ elif page == "Collision Explorer":
 elif page == "Model Insights":
     render_model_insights()
 
-st.markdown(
-    f'<div class="footer"><strong style="color:{INK}">ROAD SAFETY INTELLIGENCE</strong>'
-    f' · UK Department for Transport STATS19 collision, vehicle and casualty records'
-    f'<br>Analytical and educational project. Model outputs are research-only and not intended for operational decisions.</div>',
-    unsafe_allow_html=True,
-)
+st.markdown('<div class="footer">UK Department for Transport · STATS19 · Research demonstration</div>', unsafe_allow_html=True)
